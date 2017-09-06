@@ -13,12 +13,23 @@
  *
  * @endcode
  */
-Ultrasonic::Ultrasonic(unsigned int *pru_sharedmem, unsigned int sharedmem_index)
+Ultrasonic::Ultrasonic(PRU *pru, unsigned int sharedmem_index)
 {
-    _prumem   = pru_sharedmem;
+    _prumem   = pru->GetSharedMemPointer();
     _pruindex = sharedmem_index;
 }
 
+
+/**
+ * @brief Returns pulse width from ultrasonic sensor.
+ *
+ * @return Returns double representing pulse width in milliseconds.
+ *
+ * Example usage:
+ * @code
+ *
+ * @endcode
+ */
 double Ultrasonic::GetPulseWidth()
 {
     volatile unsigned int pulsewidth_cycles;

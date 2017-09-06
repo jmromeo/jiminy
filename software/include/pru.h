@@ -6,4 +6,17 @@
 
 #define PRU_CYCLES_PER_SECOND     200000000.0
 
+class PRU
+{
+    private:
+        unsigned int *_prumem;
+        unsigned int _prunum;
+
+    public:
+        PRU(const char *pru_firmware, unsigned int pru_num);
+        ~PRU();
+
+        unsigned int *GetSharedMemPointer();
+};
+
 #endif // __PRU_H__

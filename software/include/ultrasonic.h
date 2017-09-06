@@ -1,6 +1,8 @@
 #ifndef __ULTRASONIC_H__
 #define __ULTRASONIC_H__
 
+#include "pru.h"
+
 class Ultrasonic
 {
   private:
@@ -12,11 +14,10 @@ class Ultrasonic
   public:
 
     // constructor
-    Ultrasonic(unsigned int *pru_sharedmem, unsigned int sharedmem_index);
+    Ultrasonic(PRU *pru, unsigned int sharedmem_index);
 
-    // setup and receive/transmit
+    // retrieve sensor data from pru
     double GetPulseWidth();
-
 };
 
 #endif // __ULTRASONIC_H__
