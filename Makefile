@@ -1,9 +1,9 @@
 #CROSS_COMPILE?=arm-arago-linux-gnueabi-
 
-LIBDIR_APP_LOADER?=../../app_loader/lib
 INCDIR_APP_LOADER?=/usr/include/pruss
+INCDIR=./software/include
 
-CFLAGS+= -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -O2 -mtune=cortex-a8 -march=armv7-a
+CFLAGS+= -Wall -I$(INCDIR_APP_LOADER) -I$(INCDIR) -D__DEBUG -O2 -mtune=cortex-a8 -march=armv7-a
 LDFLAGS+=-lprussdrv  
 OBJDIR=obj
 TARGET=jiminy.elf
@@ -15,10 +15,10 @@ VPATH=software
 default: $(TARGET) $(BIN)
 all: $(TARGET) $(BIN)
 
-_OBJ = PRU_memAcc_DDR_sharedRAM.o
+_OBJ = PRU_memAcc_DDR_sharedRAM.o ultrasonic.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
-$(OBJDIR)/%.o: %.c #$(DEPS)
+$(OBJDIR)/%.o: %.cpp #$(DEPS)
 	@mkdir -p obj
 	$(CROSS_COMPILE)g++ $(CFLAGS) -c -o $@ $<
 

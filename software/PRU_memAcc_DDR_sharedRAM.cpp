@@ -49,21 +49,14 @@
 #include <pruss_intc_mapping.h>
 #include <prussdrv.h>
 
+#include "pru.h"
+#include "ultrasonic.h"
 
 
-
-#define PRU_NUM           0
-#define PRU_CLOCKSPEED    200000000.0
 
 int main (void)
 {
     unsigned int ret;
-    unsigned int result_left;
-    unsigned int result_center;
-    unsigned int result_right;
-    double       pulse_width_left;
-    double       pulse_width_center;
-    double       pulse_width_right;
     unsigned int *pru_sharedmem;
 
     tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
@@ -83,33 +76,27 @@ int main (void)
     prussdrv_pruintc_init(&pruss_intc_initdata);
 
     /* Loading firmware onto PRU to read pulse width sensors (ultrasonic and motor ESC) */
-    prussdrv_exec_program (PRU_NUM, "./firmware/pulsewidth_sensors.bin");
+    prussdrv_exec_program (PRU0, "./firmware/pulsewidth_sensors.bin");
 
     /* Allocate Shared PRU memory. */
     prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, (void**)&pru_sharedmem);
 
+    /* Setting up Ultrasonic Sensors */
+    Ultrasonic left_sensor(pru_sharedmem,   0);
+    Ultrasonic center_sensor(pru_sharedmem, 1);
+    Ultrasonic right_sensor(pru_sharedmem,  2);
+
     while(1)
     {
-        // reading shared mem that contains pulse width values. 
-        // values are stored in number of PRU clock cycles. to get
-        // speed in MS we will divide by (PRU_CLOCKSPEED / 1000)
-        result_left   = pru_sharedmem[0];
-        result_center = pru_sharedmem[1];
-        result_right  = pru_sharedmem[2];
-
-        pulse_width_left   = (double)(result_left) / (PRU_CLOCKSPEED / 1000);
-        pulse_width_center = (double)(result_center) / (PRU_CLOCKSPEED / 1000);
-        pulse_width_right  = (double)(result_right) / (PRU_CLOCKSPEED / 1000);
-
-        printf("pulse width left   %.2f ms\n", pulse_width_left);
-        printf("pulse width center %.2f ms\n", pulse_width_center);
-        printf("pulse width right  %.2f ms\n", pulse_width_right);
+        printf("pulse width left   %.2f ms\n", left_sensor.GetPulseWidth());
+        printf("pulse width center %.2f ms\n", center_sensor.GetPulseWidth());
+        printf("pulse width right  %.2f ms\n", right_sensor.GetPulseWidth());
 
         usleep(10000);
     }
 
     /* Disable PRU and close memory mapping*/
-    prussdrv_pru_disable(PRU_NUM);
+    prussdrv_pru_disable(PRU0);
     prussdrv_exit ();
 
     return(0);
