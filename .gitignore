@@ -1,0 +1,4 @@
+*.dtbo
+*.o
+*.elf
+*.bin
