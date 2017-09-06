@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <unistd.h>
 
@@ -7,12 +5,11 @@
 #include "pru.h"
 #include "ultrasonic.h"
 
-
 int main (void)
 {
     PRU pru0_sensors("./firmware/pulsewidth_sensors.bin", PRU0);
 
-    /* Setting up Ultrasonic Sensors */
+    // Setting up ultrasonic sensors
     Ultrasonic left_sensor(&pru0_sensors,   0);
     Ultrasonic center_sensor(&pru0_sensors, 1);
     Ultrasonic right_sensor(&pru0_sensors,  2);

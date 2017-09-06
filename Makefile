@@ -15,7 +15,7 @@ VPATH=software
 default: $(TARGET) $(BIN)
 all: $(TARGET) $(BIN)
 
-_OBJ = PRU_memAcc_DDR_sharedRAM.o ultrasonic.o pru.o
+_OBJ = main.o ultrasonic.o pru.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: %.cpp #$(DEPS)
