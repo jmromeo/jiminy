@@ -20,7 +20,7 @@ int main (void)
         printf("pulse width center %.2f ms\n", center_sensor.GetPulseWidth());
         printf("pulse width right  %.2f ms\n", right_sensor.GetPulseWidth());
 
-        usleep(10000);
+        usleep(100000);
     }
 
     return(0);
