@@ -17,23 +17,27 @@
 #define ULTRASONIC_RIGHT_SHARED_RAM_OFFSET  8 
 
 #define PRU_CLOCKSPEED  200000000
-#define TIMEOUT_MS      20
-#define TIMEOUT_CYCLES  ((PRU_CLOCKSPEED / 1000) * TIMEOUT_MS)
-#define TIMEOUT         (TIMEOUT_CYCLES / DWORD_MAX)
+
+#define TIMEOUT_ESC_MS    20
+#define TIMEOUT_ESC       (((PRU_CLOCKSPEED / 1000) * TIMEOUT_ESC_MS) / DWORD_MAX)
+ 
 
 
 CONTINUE:
 
     MOV   r0, ULTRASONIC_LEFT_GPIO
     MOV   r1, ULTRASONIC_LEFT_SHARED_RAM_OFFSET
+    MOV   r4, TIMEOUT_ESC
     JAL   r29.w0, CALCULATE_PULSE_WIDTH
 
     MOV   r0, ULTRASONIC_CENTER_GPIO
     MOV   r1, ULTRASONIC_CENTER_SHARED_RAM_OFFSET
+    MOV   r4, TIMEOUT_ESC
     JAL   r29.w0, CALCULATE_PULSE_WIDTH
     
     MOV   r0, ULTRASONIC_RIGHT_GPIO
     MOV   r1, ULTRASONIC_RIGHT_SHARED_RAM_OFFSET
+    MOV   r4, TIMEOUT_ESC
     JAL   r29.w0, CALCULATE_PULSE_WIDTH
 
     JMP	  CONTINUE
@@ -67,11 +71,11 @@ CHECK_TIMEOUT:
  *                       <a href=http://elinux.org/Ti_AM33XX_PRUSSv2#Beaglebone_PRU_connections_and_modes>
  *                       for more details.
  * @param r1(Shared Memory Address) - Offset in shared memory address location to store pulse width.
+ * @param r4(TIMEOUT VALUE) - Value calculated using:  Value = (((PRU_CLOCKSPEED / TIMEOUT_MS) * 1000) / 65535)
  */
 CALCULATE_PULSE_WIDTH:
 
     // resetting timeout registers
-    MOV   r4, TIMEOUT
     MOV   r5, DWORD_MAX
 
     // waiting for 0 on GPIO pin (gpio pin number stored in r0). This will allow
