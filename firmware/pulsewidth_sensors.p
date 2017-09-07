@@ -1,5 +1,3 @@
-/// TODO: ADD TIMEOUT SO THAT WE DON'T HANG IF THERE IS AN ISSUE WITH 1 SIGNAL
-
 .origin 0
 .entrypoint MEMACCESS_DDR_PRUSHAREDRAM
 
@@ -27,13 +25,17 @@
 #define ULTRASONIC_RIGHT_PINSTATUS r19
 
 
-
-
 INIT:
     MOV r28, 0
-    MOV r27, 0
-    MOV r26, 0
-    MOV r25, 0
+    MOV ULTRASONIC_LEFT_LOWTIME, 0
+    MOV ULTRASONIC_LEFT_HIGHTIME, 0
+    MOV ULTRASONIC_LEFT_PINSTATUS, 0
+    MOV ULTRASONIC_CENTER_LOWTIME, 0
+    MOV ULTRASONIC_CENTER_HIGHTIME, 0
+    MOV ULTRASONIC_CENTER_PINSTATUS, 0
+    MOV ULTRASONIC_RIGHT_LOWTIME, 0
+    MOV ULTRASONIC_RIGHT_HIGHTIME, 0
+    MOV ULTRASONIC_RIGHT_PINSTATUS, 0
 
 CONTINUE:
 
@@ -71,7 +73,7 @@ CONTINUE:
     MOV     ULTRASONIC_RIGHT_PINSTATUS, r9
 
     ADD     r28, r28, 2
-    JMP	    CONTINUE
+    JMP     CONTINUE
 
 JMP  EXIT
 
@@ -99,7 +101,7 @@ CALCULATE_PULSEWIDTH:
         JMP   r29.w0
 
     // storing current timer value if pin is low and we haven't found a signal edge.
-    // once we find signal edge we can use this timer value to
+    // once we find signal edge we can use this and pin high timer value to figure out pulsewidth.
     PIN_LOW:
         ADD   r28, r28, 6
         MOV   r6, r28
@@ -107,7 +109,7 @@ CALCULATE_PULSEWIDTH:
         JMP   r29.w0
 
     // if positive signal edge do nothing. if negative signal edge, calculate pulse
-    // width and store in appropriate offset
+    // width and store in appropriate shared memory area
     SIGNAL_EDGE:
         ADD   r28, r28, 5
         AND   r8, r8, 1
@@ -115,11 +117,11 @@ CALCULATE_PULSEWIDTH:
         MOV   r9, r8
         JMP   r29.w0
 
-    // calculating pulsewidth and storing
+    // calculating and storing pulsewidth
     STORE_PULSEWIDTH:
         ADD     r28, r28, 5
         SUB     r10, r7, r6
-        SBCO    r10, CONST_PRUSHAREDRAM, ULTRASONIC_LEFT_SHARED_RAM_OFFSET, 4
+        SBCO    r10, CONST_PRUSHAREDRAM, r3, 4
         MOV     r9, r8
         JMP     r29.w0
 
