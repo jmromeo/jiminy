@@ -27,6 +27,7 @@ make
 ./jiminy.elf
 ```
 
+## Current State
 Here's a snapshot of Jiminy in his development phase. In the future I would like 
 to 3D print a custom body to house the sensors and electronics to clean him up.
 ![ScreenShot](documentation/images/grasshopper_prototype.jpg)
